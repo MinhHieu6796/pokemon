@@ -1,5 +1,5 @@
 # 1. Build stage
-FROM node:18-alpine AS builder
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
@@ -11,11 +11,10 @@ RUN npm ci
 COPY . .
 
 # Build Next.js
-RUN npm i
 RUN npm run build
 
 # 2. Run stage (lightweight)
-FROM node:18-alpine AS runner
+FROM node:20-alpine AS runner
 
 WORKDIR /app
 
