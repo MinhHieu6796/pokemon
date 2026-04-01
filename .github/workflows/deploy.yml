@@ -19,11 +19,16 @@ jobs:
 
       # 3. Build image
       - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/pokemon-app:${{ github.sha }} .
+        run: |
+          VERSION="v1.${{ github.run_number }}"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/pokemon-app:$VERSION -t ${{ secrets.DOCKER_USERNAME }}/pokemon-app:latest .
 
       # 4. Push image
       - name: Push Docker image
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/pokemon-app:${{ github.sha }}
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/pokemon-app:$VERSION
+          docker push ${{ secrets.DOCKER_USERNAME }}/pokemon-app:latest
 
       # # 5. Deploy to EC2
       # - name: SSH deploy
