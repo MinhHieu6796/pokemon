@@ -11,6 +11,7 @@ RUN npm ci
 COPY . .
 
 # Build Next.js
+RUN npm i
 RUN npm run build
 
 # 2. Run stage (lightweight)

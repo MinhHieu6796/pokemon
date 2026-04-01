@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { getPokemonPage } from "@/api/pokemon";
 import PokemonGrid from "@/components/PokemonGrid";
 import Pagination from "@/components/Pagination";
@@ -44,7 +45,9 @@ export default async function PokemonListContainer({
         )}
       </section>
 
-      <Pagination pagination={paginationInfo} />
+      <Suspense fallback={null}>
+        <Pagination pagination={paginationInfo} />
+      </Suspense>
     </>
   );
 }

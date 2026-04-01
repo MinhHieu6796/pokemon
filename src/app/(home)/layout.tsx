@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { fetchTypes } from "@/api/pokemon";
 import TypeFilter from "@/components/TypeFilter";
 import Header from "@/components/Header";
@@ -21,7 +22,9 @@ export default async function HomeLayout({
                 Filter by Type
               </h2>
             </div>
-            <TypeFilter types={availableTypes} />
+            <Suspense fallback={null}>
+              <TypeFilter types={availableTypes} />
+            </Suspense>
           </section>
 
           {children}

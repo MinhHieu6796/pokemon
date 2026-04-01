@@ -20,7 +20,7 @@ export default function Pagination({ pagination }: PaginationProps) {
 
     const params = new URLSearchParams(searchParams.toString());
     params.set("page", page.toString());
-    
+
     router.push(`${pathname}?${params.toString()}`);
   };
 
@@ -30,7 +30,7 @@ export default function Pagination({ pagination }: PaginationProps) {
     const { currentPage, totalPages } = pagination;
     const delta = 2;
     const range: number[] = [];
-    
+
     for (
       let i = Math.max(2, currentPage - delta);
       i <= Math.min(totalPages - 1, currentPage + delta);
