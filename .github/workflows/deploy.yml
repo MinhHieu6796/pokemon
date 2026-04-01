@@ -1,0 +1,44 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout code
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      # 2. Login Docker Hub
+      - name: Login Docker
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      # 3. Build image
+      - name: Build Docker image
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/pokemon-app:${{ github.sha }} .
+
+      # 4. Push image
+      - name: Push Docker image
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/pokemon-app:${{ github.sha }}
+
+      # # 5. Deploy to EC2
+      # - name: SSH deploy
+      #   uses: appleboy/ssh-action@v0.1.6
+      #   with:
+      #     host: ${{ secrets.EC2_HOST }}
+      #     username: ${{ secrets.EC2_USER }}
+      #     key: ${{ secrets.EC2_SSH_KEY }}
+      #     script: |
+      #       docker pull ${{ secrets.DOCKER_USERNAME }}/pokemon-app:latest
+
+      #       docker stop pokemon-app || true
+      #       docker rm pokemon-app || true
+
+      #       docker run -d \
+      #         --name pokemon-app \
+      #         -p 3000:3000 \
+      #         ${{ secrets.DOCKER_USERNAME }}/pokemon-app:latest
