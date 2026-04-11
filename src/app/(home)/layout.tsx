@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { fetchTypes } from "@/api/pokemon";
 import TypeFilter from "@/components/TypeFilter";
 import Header from "@/components/Header";
+import { getCurrentUser } from "@/utils/auth";
 
 export default async function HomeLayout({
   children,
@@ -10,10 +11,11 @@ export default async function HomeLayout({
 }>) {
   const typesData = await fetchTypes();
   const availableTypes = typesData.results.map((type: { name: string }) => type.name);
+  const user = await getCurrentUser();
 
   return (
     <>
-      <Header />
+      <Header user={user} />
       <main className="container mx-auto px-4 py-8">
         <div className="flex flex-col gap-8">
           <section className="flex flex-col gap-3">

@@ -1,4 +1,29 @@
-export default function Header() {
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+
+interface HeaderProps {
+  user?: { name: string; email: string } | null;
+}
+
+export default function Header({ user }: HeaderProps) {
+  const router = useRouter();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+      router.push("/login");
+      router.refresh();
+    } catch {
+      console.error("Failed to logout");
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
+
   return (
     <header className="relative overflow-hidden">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -32,6 +57,21 @@ export default function Header() {
         <p className="text-sm md:text-base text-white/50 font-medium">
           Explore the world of Pokémon
         </p>
+
+        {user && (
+          <div className="mt-4 flex items-center gap-4">
+            <div className="text-sm text-gray-300">
+              Welcome, <span className="font-semibold text-white">{user.name}</span>
+            </div>
+            <button
+              onClick={handleLogout}
+              disabled={isLoggingOut}
+              className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-2 text-sm font-medium text-red-400 transition-all hover:bg-red-500/20 hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {isLoggingOut ? "Logging out..." : "Logout"}
+            </button>
+          </div>
+        )}
       </div>
     </header>
   );
