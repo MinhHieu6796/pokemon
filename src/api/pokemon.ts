@@ -44,7 +44,23 @@ export async function fetchTypeDetail(typeName: string): Promise<TypeDetailRespo
   return res.json();
 }
 
-function extractIdFromUrl(url: string): number {
+export async function fetchPokemonSpecies(id: string | number) {
+  const res = await fetch(`${BASE_URL}/pokemon-species/${id}`, {
+    next: { revalidate: 86400 }, // Species data rarely changes
+  });
+  if (!res.ok) throw new Error(`Failed to fetch species: ${id}`);
+  return res.json();
+}
+
+export async function fetchEvolutionChain(url: string) {
+  const res = await fetch(url, {
+    next: { revalidate: 86400 }, // Evolution chain data rarely changes
+  });
+  if (!res.ok) throw new Error(`Failed to fetch evolution chain`);
+  return res.json();
+}
+
+export function extractIdFromUrl(url: string): number {
   const parts = url.replace(/\/$/, "").split("/");
   return parseInt(parts[parts.length - 1], 10);
 }

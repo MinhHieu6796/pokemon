@@ -7,6 +7,7 @@ import TypeMatchups from "@/components/TypeMatchups";
 import { useQuery, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import PokemonStatsChart from "@/components/stats/PokemonStatsChart";
 import PokemonStatsTable from "@/components/stats/PokemonStatsTable";
+import EvolutionChain from "@/components/EvolutionChain";
 
 // Define types for Pokemon data
 interface TypeData {
@@ -224,6 +225,11 @@ export default function PokemonDetailPage() {
             <div className="col-span-12 lg:col-span-7">
               <TypeMatchups types={pokemon.types} />
             </div>
+          </div>
+
+          {/* Row 3: Evolution Chain */}
+          <div className="mt-4">
+            <EvolutionChain pokemonId={pokemon.id} />
           </div>
         </div>
       </div>

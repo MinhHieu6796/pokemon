@@ -73,3 +73,33 @@ export interface PaginationInfo {
   totalItems: number;
   itemsPerPage: number;
 }
+
+export interface PokemonSpecies {
+  evolution_chain: {
+    url: string;
+  };
+}
+
+export interface EvolutionDetail {
+  min_level: number | null;
+  item: NamedAPIResource | null;
+  trigger: NamedAPIResource;
+  min_happiness: number | null;
+  held_item: NamedAPIResource | null;
+  known_move: NamedAPIResource | null;
+  known_move_type: NamedAPIResource | null;
+  location: NamedAPIResource | null;
+  time_of_day: string;
+}
+
+export interface ChainLink {
+  is_baby: boolean;
+  species: NamedAPIResource;
+  evolution_details: EvolutionDetail[];
+  evolves_to: ChainLink[];
+}
+
+export interface EvolutionChainResponse {
+  id: number;
+  chain: ChainLink;
+}
