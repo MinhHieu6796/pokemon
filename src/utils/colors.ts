@@ -18,3 +18,9 @@ export const typeColors: Record<string, { light: string; medium: string }> = {
   steel: { light: "#D1D1E0", medium: "#B7B7CE" },
   fairy: { light: "#F4BDC9", medium: "#D685AD" },
 };
+
+export function getTypeColorClass(type: string): string {
+  const colors = typeColors[type.toLowerCase()];
+  return colors ? colors.medium : "#888888";
+}
+

@@ -5,6 +5,8 @@ import {
   TypeDetailResponse,
   PokemonCardData,
   NamedAPIResource,
+  Location,
+  LocationArea,
 } from "@/types/pokemon";
 
 const BASE_URL = "https://pokeapi.co/api/v2";
@@ -57,6 +59,55 @@ export async function fetchEvolutionChain(url: string) {
     next: { revalidate: 86400 }, // Evolution chain data rarely changes
   });
   if (!res.ok) throw new Error(`Failed to fetch evolution chain`);
+  return res.json();
+}
+
+// Location/Map API functions
+export async function fetchLocation(idOrName: string | number): Promise<Location> {
+  const res = await fetch(`${BASE_URL}/location/${idOrName}`, {
+    next: { revalidate: 86400 },
+  });
+  if (!res.ok) throw new Error(`Failed to fetch location: ${idOrName}`);
+  return res.json();
+}
+
+export async function fetchLocationArea(idOrName: string | number): Promise<LocationArea> {
+  const res = await fetch(`${BASE_URL}/location-area/${idOrName}`, {
+    next: { revalidate: 86400 },
+  });
+  if (!res.ok) throw new Error(`Failed to fetch location area: ${idOrName}`);
+  return res.json();
+}
+
+export async function fetchLocationEncounters(locationName: string) {
+  const res = await fetch(`${BASE_URL}/location/${locationName}`, {
+    next: { revalidate: 86400 },
+  });
+  if (!res.ok) throw new Error(`Failed to fetch location: ${locationName}`);
+  const location = await res.json();
+
+  // Fetch all location areas to get encounters
+  const areaPromises = location.areas.map((area: NamedAPIResource) =>
+    fetch(area.url, { next: { revalidate: 86400 } }).then(r => r.json())
+  );
+
+  const areas = await Promise.all(areaPromises);
+  return areas.flatMap((area: LocationArea) => area.pokemon_encounters || []);
+}
+
+export async function fetchRegion(regionName: string) {
+  const res = await fetch(`${BASE_URL}/region/${regionName}`, {
+    next: { revalidate: 86400 },
+  });
+  if (!res.ok) throw new Error(`Failed to fetch region: ${regionName}`);
+  return res.json();
+}
+
+export async function fetchRegions() {
+  const res = await fetch(`${BASE_URL}/region`, {
+    next: { revalidate: 86400 },
+  });
+  if (!res.ok) throw new Error("Failed to fetch regions");
   return res.json();
 }
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 interface HeaderProps {
@@ -31,7 +32,7 @@ export default function Header({ user }: HeaderProps) {
         <div className="absolute -top-24 -right-24 w-72 h-72 bg-violet-500/20 rounded-full blur-3xl" />
       </div>
 
-      <div className="relative z-10 flex flex-col items-center gap-3 py-12">
+      <div className="relative z-10 flex flex-col items-center gap-3 py-8">
         <div className="w-14 h-14 relative">
           <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg animate-[spin_20s_linear_infinite]">
             <circle cx="50" cy="50" r="48" fill="none" stroke="white" strokeWidth="3" opacity="0.3" />
@@ -52,8 +53,20 @@ export default function Header({ user }: HeaderProps) {
         </div>
 
         <h1 className="text-4xl md:text-5xl font-extrabold bg-linear-to-r from-blue-400 via-violet-400 to-pink-400 bg-clip-text text-transparent">
-          Pokédex
+          <Link href="/" className="hover:opacity-80 transition-opacity">Pokédex</Link>
         </h1>
+
+        {/* Navigation Links */}
+        <div className="flex items-center gap-4 mt-2">
+          <Link
+            href="/maps"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white/70 hover:text-white text-sm font-medium transition-all"
+          >
+            <span>🗺️</span>
+            <span>Maps</span>
+          </Link>
+        </div>
+
         <p className="text-sm md:text-base text-white/50 font-medium">
           Explore the world of Pokémon
         </p>

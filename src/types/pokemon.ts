@@ -103,3 +103,123 @@ export interface EvolutionChainResponse {
   id: number;
   chain: ChainLink;
 }
+
+// Location types
+export interface Location {
+  id: number;
+  name: string;
+  region: NamedAPIResource | null;
+  names: { name: string; language: NamedAPIResource }[];
+  game_indices: { game_index: number; generation: NamedAPIResource }[];
+}
+
+export interface LocationArea {
+  id: number;
+  name: string;
+  location: NamedAPIResource;
+  pokemon_encounters: Encounter[];
+}
+
+export interface Encounter {
+  pokemon: NamedAPIResource;
+  version_details: EncounterVersionDetail[];
+}
+
+export interface EncounterVersionDetail {
+  version: NamedAPIResource;
+  encounter_details: EncounterDetail[];
+  max_chance: number;
+}
+
+export interface EncounterDetail {
+  min_level: number;
+  max_level: number;
+  condition_values: NamedAPIResource[];
+  chance: number;
+  method: NamedAPIResource;
+}
+
+// Region types
+export interface Region {
+  id: number;
+  name: string;
+  locations: NamedAPIResource[];
+  main_generation: NamedAPIResource;
+}
+
+// City position for SVG map
+export interface CityMarker {
+  name: string;
+  x: number; // percentage position
+  y: number; // percentage position
+  locationId: string; // for API lookup
+}
+
+// Map data for each region
+export interface RegionMapData {
+  regionName: string;
+  width: number;
+  height: number;
+  cities: CityMarker[];
+  paths?: { from: string; to: string }[]; // connection paths
+}
+
+// Location types
+export interface Location {
+  id: number;
+  name: string;
+  region: NamedAPIResource | null;
+  names: { name: string; language: NamedAPIResource }[];
+  game_indices: { game_index: number; generation: NamedAPIResource }[];
+}
+
+export interface LocationArea {
+  id: number;
+  name: string;
+  location: NamedAPIResource;
+  pokemon_encounters: Encounter[];
+}
+
+export interface Encounter {
+  pokemon: NamedAPIResource;
+  version_details: EncounterVersionDetail[];
+}
+
+export interface EncounterVersionDetail {
+  version: NamedAPIResource;
+  encounter_details: EncounterDetail[];
+  max_chance: number;
+}
+
+export interface EncounterDetail {
+  min_level: number;
+  max_level: number;
+  condition_values: NamedAPIResource[];
+  chance: number;
+  method: NamedAPIResource;
+}
+
+// Region types
+export interface Region {
+  id: number;
+  name: string;
+  locations: NamedAPIResource[];
+  main_generation: NamedAPIResource;
+}
+
+// City position for SVG map
+export interface CityMarker {
+  name: string;
+  x: number; // percentage position
+  y: number; // percentage position
+  locationId: string; // for API lookup
+}
+
+// Map data for each region
+export interface RegionMapData {
+  regionName: string;
+  width: number;
+  height: number;
+  cities: CityMarker[];
+  paths?: { from: string; to: string }[]; // connection paths
+}
