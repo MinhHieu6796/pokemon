@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { PokemonCardData } from "@/types/pokemon";
 import { TYPE_COLORS, STAT_LABELS, STAT_COLORS } from "@/utils/constants";
 
@@ -10,7 +11,8 @@ export default function PokemonCard({ pokemon }: PokemonCardProps) {
   const primaryTypeColor = TYPE_COLORS[pokemon.types[0]] ?? "#A8A77A";
 
   return (
-    <div className="group relative flex flex-col overflow-hidden rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 shadow-lg hover:shadow-2xl hover:scale-[1.03] transition-all duration-300 ease-out">
+    <Link href={`/pokemon/${pokemon.id}`} className="block cursor-pointer">
+      <div className="group relative flex flex-col overflow-hidden rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 shadow-lg hover:shadow-2xl hover:scale-[1.03] transition-all duration-300 ease-out">
       <div
         className="relative flex items-center justify-center pt-6 pb-10 px-4"
         style={{
@@ -70,5 +72,6 @@ export default function PokemonCard({ pokemon }: PokemonCardProps) {
         </div>
       </div>
     </div>
+    </Link>
   );
 }
