@@ -65,6 +65,13 @@ export default function Header({ user }: HeaderProps) {
             <span>🗺️</span>
             <span>Maps</span>
           </Link>
+          <Link
+            href="/team-builder"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white/70 hover:text-white text-sm font-medium transition-all"
+          >
+            <span>👥</span>
+            <span>Team Builder</span>
+          </Link>
         </div>
 
         <p className="text-sm md:text-base text-white/50 font-medium">

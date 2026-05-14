@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "WebFetch(domain:pokeapi.co)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(npm run *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/team-builder)",
+      "Bash(pkill -f \"next dev\")",
+      "Bash(node *)"
     ]
   }
 }

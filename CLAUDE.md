@@ -1,112 +1,95 @@
 # CLAUDE.md
 
-Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-specific instructions as needed.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-**Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
+## Project Overview
 
-## 1. Think Before Coding
+A Pokédex web application built with **Next.js 16**, **React 19**, **TypeScript**, and **Tailwind CSS v4**. It consumes the [PokéAPI](https://pokeapi.co/docs/v2) (external REST API) to display Pokémon data, stats, evolution chains, and region maps.
 
-**Don't assume. Don't hide confusion. Surface tradeoffs.**
+## Commands
 
-Before implementing:
-- State your assumptions explicitly. If uncertain, ask.
-- If multiple interpretations exist, present them - don't pick silently.
-- If a simpler approach exists, say so. Push back when warranted.
-- If something is unclear, stop. Name what's confusing. Ask.
-
-## 2. Simplicity First
-
-**Minimum code that solves the problem. Nothing speculative.**
-
-- No features beyond what was asked.
-- No abstractions for single-use code.
-- No "flexibility" or "configurability" that wasn't requested.
-- No error handling for impossible scenarios.
-- If you write 200 lines and it could be 50, rewrite it.
-
-Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
-
-## 3. Surgical Changes
-
-**Touch only what you must. Clean up only your own mess.**
-
-When editing existing code:
-- Don't "improve" adjacent code, comments, or formatting.
-- Don't refactor things that aren't broken.
-- Match existing style, even if you'd do it differently.
-- If you notice unrelated dead code, mention it - don't delete it.
-
-When your changes create orphans:
-- Remove imports/variables/functions that YOUR changes made unused.
-- Don't remove pre-existing dead code unless asked.
-
-The test: Every changed line should trace directly to the user's request.
-
-## 4. Goal-Driven Execution
-
-**Define success criteria. Loop until verified.**
-
-Transform tasks into verifiable goals:
-- "Add validation" → "Write tests for invalid inputs, then make them pass"
-- "Fix the bug" → "Write a test that reproduces it, then make it pass"
-- "Refactor X" → "Ensure tests pass before and after"
-
-For multi-step tasks, state a brief plan:
-```
-1. [Step] → verify: [check]
-2. [Step] → verify: [check]
-3. [Step] → verify: [check]
+```bash
+npm run dev        # Start dev server (Next.js dev mode)
+npm run build      # Production build
+npm run start      # Start production server
+npm run lint       # Run ESLint
 ```
 
-Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
+No test framework is configured.
 
----
+## Architecture
 
-**These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
+### Tech Stack
+- **Framework**: Next.js 16 (App Router) with React Server Components
+- **Styling**: Tailwind CSS v4 with `postcss.config.mjs`
+- **State Management**: TanStack Query (`@tanstack/react-query`) for client-side data fetching
+- **Charts**: Recharts for Pokémon stats visualization
+- **Icons**: Heroicons
+- **External API**: PokéAPI (`https://pokeapi.co/api/v2`) — no backend database
 
----
+### Directory Structure
 
-## Agent & Skill Navigation
+```
+src/
+├── api/pokemon.ts              # API layer: fetch functions + data transformation
+├── data/maps.ts                # Static region map data (Kanto, Johto, Hoenn, Sinnoh, Unova)
+├── types/                      # TypeScript interfaces
+│   ├── pokemon.ts              # Pokémon, types, locations, evolution chain types
+│   └── auth.ts                 # Auth-related types
+├── utils/                      # Utility functions
+│   ├── auth.ts                 # Cookie-based auth (demo users, no DB)
+│   └── constants.ts            # Type colors, stat labels, pagination config
+├── components/                 # React components
+│   ├── stats/                  # PokemonStatsChart, PokemonStatsTable
+│   ├── map/                    # RegionMap, LocationSidebar
+│   └── (root)                  # PokemonGrid, PokemonCard, TypeFilter, Pagination, etc.
+└── app/                        # Next.js App Router
+    ├── layout.tsx              # Root layout (font, Providers, background)
+    ├── providers.tsx           # TanStack Query client provider
+    ├── (home)/                 # Route group: main Pokédex listing
+    │   ├── layout.tsx          # Header + TypeFilter
+    │   ├── page.tsx            # Home page with Suspense + searchParams
+    │   └── containers/         # PokemonListContainer (server component)
+    ├── (auth)/                 # Route group: authentication
+    │   ├── layout.tsx          # Plain layout wrapper
+    │   └── login/page.tsx      # Login form (client component)
+    ├── pokemon/[id]/page.tsx   # Pokémon detail page (client component)
+    ├── maps/page.tsx           # Region maps page (client component)
+    └── api/auth/               # Auth API routes
+        ├── login/route.ts      # POST: validate + set cookie
+        └── logout/route.ts     # POST: clear cookie
+```
 
-Tôi là một **navigator/manager** agent. Khi có task phù hợp, tôi sẽ điều hướng sang các specialized agents hoặc skills.
+### Key Patterns
 
-### Agents (Task lớn, chuyên biệt)
+**Server vs Client Components:**
+- Route-level pages that do data fetching are **server components** (`(home)/page.tsx`, `PokemonListContainer`)
+- Pages that need interactivity/hooks are **client components** (`pokemon/[id]/page.tsx`, `maps/page.tsx`, `login/page.tsx`)
+- `useQuery` from TanStack Query is used in client components for interactive data fetching
 
-| Agent | Trigger |
-|-------|---------|
-| `backend-architect` | Backend design, Node.js, distributed systems |
-| `frontend-architect` | Frontend design, React, UI components |
-| `principal-fullstack-architect` | System architecture, end-to-end design |
+**Data Fetching:**
+- Server components use `fetch()` with `next: { revalidate: N }` for ISR caching
+- Client components use `useQuery` from TanStack Query for caching + loading states
+- All PokéAPI calls go through `src/api/pokemon.ts` — this is the single source of truth for external API calls
 
-**Cách gọi:** Dùng Task tool với `subagent_type` phù hợp
+**Authentication:**
+- Cookie-based session auth with demo users (hardcoded in `src/utils/auth.ts`)
+- No database — sessions stored in encrypted cookies only
+- Two demo accounts: `admin@pokemon.com`/`admin123` and `user@pokemon.com`/`user123`
+- Auth routes are in `src/app/api/auth/`
 
-### Skills (Task nhỏ, chuyên biệt)
+**Routing:**
+- Route groups `(home)` and `(auth)` separate layouts without URL path segments
+- URL params: `?page=N&type=fire,water` for filtering/pagination on home
+- Dynamic route: `/pokemon/[id]` for detail pages
 
-#### Backend Skills
-| Skill | Trigger |
-|-------|---------|
-| `api-design` | REST, GraphQL, WebSocket API design |
-| `database-design` | Schema, query optimization, PostgreSQL/MongoDB |
-| `auth-security` | JWT, OAuth2, RBAC, security |
-| `microservices` | Kafka, RabbitMQ, distributed systems |
-| `performance-tuning` | Event loop, memory leaks, optimization |
+**Type Colors & Constants:**
+- All type-specific colors defined in `src/utils/constants.ts` (`TYPE_COLORS`, `TYPE_GRADIENTS`, `STAT_COLORS`)
+- Reference these instead of hardcoding color values
 
-#### Frontend Skills
-| Skill | Trigger |
-|-------|---------|
-| `react-components` | Component patterns, hooks, composition |
-| `state-management` | Zustand, Redux, TanStack Query |
-| `ui-styling` | TailwindCSS, ShadCN, Ant Design |
-| `nextjs` | Next.js App Router, SSR, data fetching |
-
-#### System Design
-| Skill | Trigger |
-|-------|---------|
-| `system-design` | End-to-end architecture planning |
-
-**Cách gọi:** Dùng Skill tool với `name`
-
-### Khi nào self-handle vs delegate?
-- Task đơn giản, ngắn → self-handle
-- Task phức tạp, chuyên biệt → delegate cho agent
-- Task mở rộng capability → load skill
+### Important Notes
+- The app has **no test suite** — verify changes manually by running the dev server
+- TypeScript strict mode is enabled (`strict: true` in `tsconfig.json`)
+- Path alias `@/*` maps to `./src/*`
+- The `maps` page uses static SVG map data — city positions are hardcoded percentages in `src/data/maps.ts`
+- Type filtering uses API intersection (fetches all Pokémon of each type, then intersects) — can be slow with multiple types

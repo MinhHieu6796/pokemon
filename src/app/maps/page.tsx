@@ -110,7 +110,7 @@ export default function MapsPage() {
                     mapData={currentMapData}
                     onCityClick={setSelectedCity}
                     selectedCity={selectedCity?.name}
-                    hoveredCity={hoveredCity}
+                    hoveredCity={hoveredCity ?? undefined}
                     onCityHover={setHoveredCity}
                   />
                 </div>
